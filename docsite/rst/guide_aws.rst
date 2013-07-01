@@ -1,5 +1,5 @@
-Amazon Web Services Guide
-=========================
+Amazon Web Services
+===================
 
 .. contents::
    :depth: 2
@@ -55,6 +55,9 @@ The ec2 module provides the ability to provision instances within EC2.  Typicall
    exporting the variable as EC2_URL=https://myhost:8773/services/Eucalyptus.
    This can be set using the 'environment' keyword in Ansible if you like.
 
+Provisioning
+````````````
+
 The ec2 module provides the ability to provision EC2 instance(s).  Typically the provisioning task will be performed against your Ansible master server as a local_action. There are two ways to provision instances:
 
 * **Non-idempotent provisioning** (default). With non-idempotent provisioning, each time the provision command is run, a new instance is provisioned regardless of any instances that are alredy running.
@@ -107,10 +110,10 @@ Rather than include configuration inline, you may also choose to just do it as a
 The method above ties the configuration of a host with the provisioning step.  This isn't always ideal and leads us onto the next section.
 
 Idempotent provisioning
-++++++++++++++
++++++++++++++++++++++++
 Idempotent provisioning provides a simple mechanism for maintaing a specified number of instances running in a particular host group.
 
-Using the ec2 inventory plugin ([documented in the API chapter](http://ansible.cc/docs/api.html#external-inventory-scripts>)) it is possible to group hosts by security group, machine image (AMI) or instance tags. Instance tags in particular provide a flexible way of marking instances as belonging to a particular host group.
+Using the ec2 inventory plugin it is possible to group hosts by security group, machine image (AMI) or instance tags. Instance tags in particular provide a flexible way of marking instances as belonging to a particular host group.
 
 The following example shows how one can idempotently provision a group of 5 hosts tagged as webservers::
 
@@ -133,6 +136,13 @@ If this play is run when 3 EC2 instances with the tag `'{"name":"webserver"}'` a
 
       tasks:
       ...
+
+If the above playbook were called `provision_webservers.yml`, then it could be run from the command line using
+
+```bash
+ansible-playbook provision_werbservers.yml -i hosts/
+```
+where the `hosts/` folder contains both files defining host groups, and the `ec2.py` inventory plugin. Only by putting all of these files together in a folder, and specifying that entire folder as the hosts location can locally defined hosts and those provided by the ec2 inventory plugin be combined.
 
 Note that the value of the `idempotency_attribute` option can also be `image`, `group` (security group), `group_id` (security group id) or `client-token`. The `client-token` is set using the `id` option.
 
