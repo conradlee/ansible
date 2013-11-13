@@ -314,7 +314,6 @@ def get_instance_info(inst):
     ID and returns it as a dictionary
     """
     instance_info = {'id': inst.id,
-                     'idempotency_attribute' = inst.idempotency_attribute,
                      'ami_launch_index': inst.ami_launch_index,
                      'private_ip': inst.private_ip_address,
                      'private_dns_name': inst.private_dns_name,
@@ -425,7 +424,8 @@ def create_instances(module, ec2):
             if idempotency_attribute == "instance_tags":
                 if instance_tags is None:
                     module.fail_json(msg = "Idempotency attribute set to id, so a value for the id option must also be provided.")
-                filter_dict = dict(("tag:" + tn, tv) for tn, tv in module.from_json(instance_tags).items())
+                
+                filter_dict = dict(("tag:" + tn, tv) for tn, tv in instance_tags.items())
             elif idempotency_attribute == "image":
                 filter_dict = {"image-id": image}
             elif idempotency_attribute == "group":
@@ -613,6 +613,7 @@ def main():
             key_name = dict(aliases = ['keypair']),
             id = dict(),
             group = dict(type='list'),
+            idempotency_attribute = dict(),
             group_id = dict(type='list'),
             region = dict(aliases=['aws_region', 'ec2_region'], choices=AWS_REGIONS),
             zone = dict(aliases=['aws_zone', 'ec2_zone']),
