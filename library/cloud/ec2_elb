@@ -201,6 +201,8 @@ class ElbManager:
                 if initial_state is None or instance_state.state != initial_state.state:
                     self.changed = True
                 break
+            elif "pending" in instance_state.description:
+                time.sleep(1)
             elif (awaited_state == 'InService'
                   and instance_state.reason_code == "Instance"):
                 # If the reason_code for the instance being out of service is
